@@ -1,0 +1,1 @@
+export const server = 'https://mern-auth-app-server-kgby.onrender.com/'
