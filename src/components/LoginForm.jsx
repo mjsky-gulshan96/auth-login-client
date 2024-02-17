@@ -3,13 +3,16 @@ import { useRef } from "react";
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { MdOutlineWifiPassword, MdEmail } from "react-icons/md";
-import { FaFacebook, FaTwitter, FaLinkedin } from "react-icons/fa";
+import { FaTwitter, FaLinkedin } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { useDispatch } from 'react-redux';
 import { profileActions } from '../store/profileSlice';
+import { useCookies } from 'react-cookie'
 import { server } from "../store/serverhost";
 
 const LoginForm = () => {
+  const [cookies, setCookie, removeCookie] = useCookies([])
+
   const dispatch = useDispatch()
 
   const navigate = useNavigate()
@@ -29,7 +32,17 @@ const LoginForm = () => {
         withCredentials: true
       })
       if (res.status == 200) {
-        dispatch(profileActions.setProfile({ profile: res.data }))
+        // setCookie('auth_token', res.data.auth_token, {
+        //   path: '/',
+        //   maxAge: 1 * 24 * 60 * 60 * 1000
+        // })
+        // if (rememberMe.current.checked) {
+        //   setCookie('rem_me', res.data.remeber_token, {
+        //     path: '/',
+        //     maxAge: 1 * 24 * 60 * 60 * 1000
+        //   })
+        // }
+        dispatch(profileActions.setProfile({ profile: res.data.user }))
         navigate('/')
       }
     } catch (error) {

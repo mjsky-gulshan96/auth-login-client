@@ -9,17 +9,17 @@ import { server } from "../store/serverhost";
 const ProfileLogo = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [cookies] = useCookies(['user']);
-
+  const [cookies] = useCookies();
+  // logout user
   const handleLogOut = async () => {
     const res = await axios.get(`${server}logout`, {
       headers: {
-        userToken: cookies.user
+        authToken: cookies.authToken,
+        rememberMe: cookies.rememberMe
       },
       withCredentials: true
     })
     if (res.status == 200) {
-      console.log(res);
       dispatch(profileActions.removeProfile())
       navigate('/login')
     }

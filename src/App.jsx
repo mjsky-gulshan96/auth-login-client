@@ -6,31 +6,33 @@ import { profileActions } from './store/profileSlice';
 import axios from 'axios';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { server } from "../store/serverhost";
+import { server } from "./store/serverhost";
 
 function App() {
   const profile = useSelector((profileStore) => profileStore.profile)
-  const [cookies] = useCookies(['connect.sid', 'user']);
+  const [cookies] = useCookies(['authToken']);
   const dispatch = useDispatch()
 
+  // get profile on page load only
   const getProfile = async () => {
     const res = await axios.get(`${server}profile`, {
       headers: {
-        userToken: cookies.user
+        authToken: cookies.authToken,
+        rememberMe: cookies.rememberMe
       },
       withCredentials: true
     })
-    if (res.status == 200) {
-      dispatch(profileActions.setProfile({ profile: res.data }))
+    if (res.status == 200) {     
+      dispatch(profileActions.setProfile({ profile: res.data.user }))
     }
   }
 
   useEffect(() => {
     const controller = new AbortController()
-    console.log('inside useeffect');
-    getProfile()
+    if (!profile) {
+      getProfile()
+    }
     return () => {
-      console.log('cleanup useeffect');
       controller.abort()
     };
   }, []);
